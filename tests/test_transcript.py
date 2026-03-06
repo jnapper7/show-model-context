@@ -491,3 +491,85 @@ def test_parse_tool_result_with_direct_name(tmp_path: Path) -> None:
     files_cats = [c for c in result if c.name == "files"]
     assert len(files_cats) == 1
     assert files_cats[0].tokens > 0
+
+
+def test_wildcard_match_tools(tmp_path: Path) -> None:
+    """match_tools with '*' matches any tool."""
+    path = tmp_path / "t.jsonl"
+    write_transcript(path, [
+        {
+            "type": "assistant",
+            "message": {
+                "content": [
+                    {"type": "tool_use", "id": "t1", "name": "SomeRandomTool", "input": {"x": 1}},
+                ],
+            },
+        },
+    ])
+    config = AppConfig(categories=[
+        CategoryConfig(name="all_tools", color="yellow", match_tools=["*"]),
+    ])
+    result = parse_transcript(str(path), config)
+    matched = [c for c in result if c.name == "all_tools"]
+    assert len(matched) == 1
+    assert matched[0].tokens > 0
+
+
+def test_wildcard_match_content_types(tmp_path: Path) -> None:
+    """match_content_types with '*' matches any content block type."""
+    path = tmp_path / "t.jsonl"
+    write_transcript(path, [
+        {
+            "type": "assistant",
+            "message": {
+                "content": [{"type": "thinking", "text": "deep thoughts about the universe"}],
+            },
+        },
+    ])
+    config = AppConfig(categories=[
+        CategoryConfig(name="everything", color="cyan", match_type="assistant", match_content_types=["*"]),
+    ])
+    result = parse_transcript(str(path), config)
+    matched = [c for c in result if c.name == "everything"]
+    assert len(matched) == 1
+    assert matched[0].tokens > 0
+
+
+def test_wildcard_content_contains(tmp_path: Path) -> None:
+    """content_contains with '*' matches any content."""
+    path = tmp_path / "t.jsonl"
+    write_transcript(path, [
+        {
+            "type": "user",
+            "message": {
+                "content": [{"type": "text", "text": "just a normal message"}],
+            },
+        },
+    ])
+    config = AppConfig(categories=[
+        CategoryConfig(name="catch_all", color="white", match_type="user", content_contains=["*"]),
+    ])
+    result = parse_transcript(str(path), config)
+    matched = [c for c in result if c.name == "catch_all"]
+    assert len(matched) == 1
+    assert matched[0].tokens > 0
+
+
+def test_wildcard_does_not_bypass_other_matchers(tmp_path: Path) -> None:
+    """Wildcard in one field doesn't bypass other field checks."""
+    path = tmp_path / "t.jsonl"
+    write_transcript(path, [
+        {
+            "type": "user",
+            "message": {
+                "content": [{"type": "text", "text": "user message"}],
+            },
+        },
+    ])
+    # match_tools=["*"] but match_type="assistant" — won't match a user entry
+    config = AppConfig(categories=[
+        CategoryConfig(name="nope", color="red", match_type="assistant", match_tools=["*"]),
+    ])
+    result = parse_transcript(str(path), config)
+    other = [c for c in result if c.name == "other"]
+    assert len(other) == 1

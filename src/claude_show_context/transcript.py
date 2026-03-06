@@ -96,15 +96,15 @@ def _match_category(
 
         if cat.match_tools:
             effective_tool = block_tool_name or tool_name_context
-            if effective_tool not in cat.match_tools:
+            if "*" not in cat.match_tools and effective_tool not in cat.match_tools:
                 continue
 
         if cat.match_content_types:
-            if block_content_type not in cat.match_content_types:
+            if "*" not in cat.match_content_types and block_content_type not in cat.match_content_types:
                 continue
 
         if cat.content_contains:
-            if not any(s in serialized for s in cat.content_contains):
+            if "*" not in cat.content_contains and not any(s in serialized for s in cat.content_contains):
                 continue
 
         return cat.name, cat.color

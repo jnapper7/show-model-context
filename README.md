@@ -133,6 +133,27 @@ Each category can use one or more of these matchers (all specified matchers must
 | `match_content_types` | Match content block `type` (`text`, `thinking`, `tool_use`, etc.) |
 | `content_contains` | Match if serialized content contains any of the listed substrings |
 
+### Wildcards
+
+Any list matcher (`match_tools`, `match_content_types`, `content_contains`) supports `"*"` as a wildcard that matches anything. This is useful for catch-all categories at the end of the list:
+
+```toml
+# Catch any tool not matched by earlier categories
+[[categories]]
+name = "tools"
+color = "yellow"
+match_tools = ["*"]
+
+# Match all assistant output regardless of content block type
+[[categories]]
+name = "claude"
+color = "green"
+match_type = "assistant"
+match_content_types = ["*"]
+```
+
+The wildcard only applies to the field it's in — other matchers on the same category still apply normally. For example, `match_type = "assistant"` with `match_tools = ["*"]` will only match assistant entries that contain tool blocks.
+
 ### Available Colors
 
 `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`, and bright variants (`bright_black`, `bright_red`, etc.), plus `dim`.

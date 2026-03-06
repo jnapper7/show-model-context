@@ -15,23 +15,23 @@ color = "blue"
 match_tools = ["Read", "Write", "Edit"]
 
 [[categories]]
-name = "tools"
-color = "yellow"
-match_tools = ["Bash", "Glob", "Grep", "WebFetch", "WebSearch", "AskUserQuestion", "EnterPlanMode", "ExitPlanMode", "Agent", "EnterWorktree", "NotebookEdit"]
-
-[[categories]]
 name = "skills"
 color = "magenta"
 match_tools = ["Task", "TaskCreate", "TaskUpdate", "TaskGet", "TaskList", "TaskStop", "TaskOutput", "Skill"]
 
 [[categories]]
+name = "tools"
+color = "yellow"
+match_tools = ["*"]
+
+[[categories]]
 name = "claude"
 color = "green"
 match_type = "assistant"
-match_content_types = ["text", "thinking"]
+match_content_types = ["*"]
 
 [[categories]]
 name = "system"
 color = "bright_black"
 match_type = "user"
-content_contains = ["<system-reminder>", "CLAUDE.md", "<local-command-"]
+content_contains = ["*"]

@@ -87,4 +87,5 @@ def main(config_path: str | None, mode: str) -> None:
         mode=mode,
     )
 
-    click.echo(output)
+    sys.stdout.write(output + "\n")
+    sys.stdout.flush()
