@@ -1,0 +1,37 @@
+# claude-show-context configuration
+# Copy to ~/.config/claude-show-context/config.toml
+
+[general]
+bar_width = 40
+empty_char = "░"
+filled_char = "█"
+
+# Categories are checked in order; first match wins.
+# Unmatched entries go to "other" (dim color).
+
+[[categories]]
+name = "system"
+color = "bright_black"
+match_type = "user"
+content_contains = ["<system-reminder>", "CLAUDE.md", "<local-command-"]
+
+[[categories]]
+name = "files"
+color = "blue"
+match_tools = ["Read", "Write", "Edit"]
+
+[[categories]]
+name = "tools"
+color = "yellow"
+match_tools = ["Bash", "Glob", "Grep", "WebFetch", "WebSearch"]
+
+[[categories]]
+name = "skills"
+color = "magenta"
+match_tools = ["Task", "Skill"]
+
+[[categories]]
+name = "claude"
+color = "green"
+match_type = "assistant"
+match_content_types = ["text", "thinking"]
