@@ -41,6 +41,6 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "uv tool run claude-show-context --mode total --config \"$CLAUDE_PROJECT_DIR\"/.claude/show-context-config.toml"
+    "command": "uv tool run claude-show-context --mode total --config .claude/show-context-config.toml"
   }
 }
