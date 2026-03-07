@@ -21,7 +21,7 @@ class CategoryConfig:
 class AppConfig:
     """Full application configuration."""
 
-    bar_width: int = 40
+    bar_width: int = 0
     empty_char: str = "░"
     filled_char: str = "█"
     label_position: str = "left"

@@ -10,7 +10,7 @@ from claude_show_context.config import DEFAULT_CATEGORIES, load_config
 def test_load_config_no_file() -> None:
     """Falls back to defaults when no config file exists."""
     config = load_config(Path("/nonexistent/config.toml"))
-    assert config.bar_width == 40
+    assert config.bar_width == 0
     assert config.empty_char == "░"
     assert config.filled_char == "█"
     assert config.label_position == "left"
@@ -72,7 +72,7 @@ name = "test"
 color = "blue"
 """)
     config = load_config(config_file)
-    assert config.bar_width == 40
+    assert config.bar_width == 0
     assert len(config.categories) == 1
 
 

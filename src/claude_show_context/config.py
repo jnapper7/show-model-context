@@ -94,7 +94,7 @@ def load_config(config_path: Path | None = None) -> AppConfig:
         general_raw = {}
     general = cast(JsonDict, general_raw)
 
-    bar_width = int(general.get("bar_width", 40))
+    bar_width = int(general.get("bar_width", 0))
     empty_char = str(general.get("empty_char", "░"))
     filled_char = str(general.get("filled_char", "█"))
     label_position = str(general.get("label_position", "left"))

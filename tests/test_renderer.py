@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+from unittest.mock import patch
+
 from claude_show_context.models import AppConfig, CategoryTokens
-from claude_show_context.renderer import RESET, render_bar
+from claude_show_context.renderer import RESET, _visible_len, render_bar
 
 
 def _config(
@@ -158,3 +160,31 @@ def test_render_bar_label_legend_right() -> None:
     assert "C" in result
     # Bar should start with ANSI escape (not with legend text)
     assert result.startswith("\033[")
+
+
+def test_render_bar_auto_width() -> None:
+    """bar_width=0 auto-detects from terminal width."""
+    categories = [CategoryTokens(name="claude", color="green", tokens=500)]
+    with patch("claude_show_context.renderer.shutil.get_terminal_size") as mock_size:
+        mock_size.return_value = type("TermSize", (), {"columns": 80})()
+        result = render_bar(categories, 10000, 200000, _config(bar_width=0), "total")
+    # Label "10K / 200K" is 11 chars, so bar should be 80 - 11 - 1 = 68 chars wide
+    assert "10K / 200K" in result
+    stripped = _visible_len(result)
+    assert stripped == 80
+
+
+def test_render_bar_auto_width_narrow_terminal() -> None:
+    """Auto-width has a minimum of 10 characters for the bar."""
+    categories = [CategoryTokens(name="claude", color="green", tokens=500)]
+    with patch("claude_show_context.renderer.shutil.get_terminal_size") as mock_size:
+        mock_size.return_value = type("TermSize", (), {"columns": 15})()
+        result = render_bar(categories, 10000, 200000, _config(bar_width=0), "total")
+    assert "10K / 200K" in result
+
+
+def test_visible_len_strips_ansi() -> None:
+    """_visible_len returns length without ANSI escape codes."""
+    assert _visible_len("hello") == 5
+    assert _visible_len("\033[32mhello\033[0m") == 5
+    assert _visible_len("\033[90m█\033[0m \033[32m█\033[0m") == 3

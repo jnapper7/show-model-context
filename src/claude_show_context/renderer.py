@@ -2,8 +2,13 @@
 
 from __future__ import annotations
 
+import re
+import shutil
+
 from claude_show_context.models import AppConfig, CategoryTokens
 from claude_show_context.tokens import format_tokens
+
+_ANSI_RE = re.compile(r"\033\[[0-9;]*m")
 
 # ANSI 16-color codes
 COLOR_CODES: dict[str, str] = {
@@ -56,23 +61,35 @@ def render_bar(
     Returns:
         A single-line string with ANSI colors for the status bar.
     """
-    bar_width = config.bar_width
     filled_char = config.filled_char
     empty_char = config.empty_char
 
     estimated_total = sum(c.tokens for c in categories)
 
     if mode == "current":
-        denominator = total_tokens if total_tokens > 0 else (estimated_total if estimated_total > 0 else 1)
-        filled_width = bar_width
         display_total = total_tokens if total_tokens > 0 else estimated_total
         display_max = display_total
+    else:
+        display_total = total_tokens if total_tokens > 0 else estimated_total
+        display_max = context_window_size
+
+    # Build the label first so we can auto-size the bar
+    label = _build_label(categories, display_total, display_max, config)
+
+    # Resolve bar width: 0 means auto-detect from terminal
+    bar_width = config.bar_width
+    if bar_width <= 0:
+        terminal_width = shutil.get_terminal_size().columns
+        visible_label_len = _visible_len(label)
+        bar_width = max(10, terminal_width - visible_label_len - 1)
+
+    if mode == "current":
+        denominator = total_tokens if total_tokens > 0 else (estimated_total if estimated_total > 0 else 1)
+        filled_width = bar_width
     else:
         denominator = context_window_size if context_window_size > 0 else 1
         used = total_tokens if total_tokens > 0 else estimated_total
         filled_width = min(bar_width, round(used / denominator * bar_width))
-        display_total = total_tokens if total_tokens > 0 else estimated_total
-        display_max = context_window_size
 
     # Compute per-category widths within the filled portion
     segments: list[tuple[int, str]] = []
@@ -106,11 +123,15 @@ def render_bar(
         bar_parts.append(_color(empty_char * empty_width, "bright_black"))
 
     bar = "".join(bar_parts)
-    label = _build_label(categories, display_total, display_max, config)
 
     if config.label_position == "right":
         return f"{bar} {label}"
     return f"{label} {bar}"
+
+
+def _visible_len(text: str) -> int:
+    """Return the visible length of a string after stripping ANSI escape codes."""
+    return len(_ANSI_RE.sub("", text))
 
 
 def _build_label(

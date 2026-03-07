@@ -2,7 +2,7 @@
 # Copy to ~/.config/claude-show-context/config.toml
 
 [general]
-bar_width = 40
+bar_width = 0             # 0 = auto-detect from terminal width
 empty_char = "░"
 filled_char = "█"
 label_position = "left"   # "left" or "right"

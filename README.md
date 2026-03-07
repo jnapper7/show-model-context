@@ -100,7 +100,7 @@ Optionally create `~/.config/claude-show-context/config.toml` (or pass `--config
 
 ```toml
 [general]
-bar_width = 40        # number of characters in the bar
+bar_width = 0             # 0 = auto-detect from terminal width; >0 = fixed character count
 empty_char = "░"      # character for unfilled portion
 filled_char = "█"     # character for filled portion
 label_position = "left"   # "left" or "right"
