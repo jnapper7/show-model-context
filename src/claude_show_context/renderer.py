@@ -106,6 +106,40 @@ def render_bar(
         bar_parts.append(_color(empty_char * empty_width, "bright_black"))
 
     bar = "".join(bar_parts)
-    label = f"{format_tokens(display_total)} / {format_tokens(display_max)}"
+    label = _build_label(categories, display_total, display_max, config)
 
+    if config.label_position == "right":
+        return f"{bar} {label}"
     return f"{label} {bar}"
+
+
+def _build_label(
+    categories: list[CategoryTokens],
+    display_total: int,
+    display_max: int,
+    config: AppConfig,
+) -> str:
+    """Build the label string based on the configured format.
+
+    Args:
+        categories: Token counts per category.
+        display_total: Total tokens to display.
+        display_max: Maximum tokens to display.
+        config: Application configuration.
+
+    Returns:
+        Formatted label string.
+    """
+    if config.label_format == "percentage":
+        if display_max == 0:
+            return "0%"
+        return f"{round(display_total / display_max * 100)}%"
+
+    if config.label_format == "legend":
+        parts: list[str] = []
+        for cat in categories:
+            if cat.tokens > 0:
+                parts.append(f"{_color(config.filled_char, cat.color)}{cat.name[0].upper()}")
+        return " ".join(parts)
+
+    return f"{format_tokens(display_total)} / {format_tokens(display_max)}"

@@ -5,6 +5,8 @@
 bar_width = 100
 empty_char = "░"
 filled_char = "█"
+label_position = "right"   # "left" or "right"
+label_format = "percentage"    # "ratio", "percentage", or "legend"
 
 # Categories are checked in order; first match wins.
 # Unmatched entries go to "other" (dim color).

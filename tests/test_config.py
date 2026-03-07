@@ -13,6 +13,8 @@ def test_load_config_no_file() -> None:
     assert config.bar_width == 40
     assert config.empty_char == "░"
     assert config.filled_char == "█"
+    assert config.label_position == "left"
+    assert config.label_format == "ratio"
     assert len(config.categories) == len(DEFAULT_CATEGORIES)
     assert config.categories[0].name == "system"
 
@@ -162,3 +164,36 @@ color = "green"
     config = load_config(config_file)
     assert len(config.categories) == 1
     assert config.categories[0].name == "valid"
+
+
+def test_load_config_label_fields(tmp_path: Path) -> None:
+    """TOML parsing picks up label_position and label_format."""
+    config_file = tmp_path / "config.toml"
+    config_file.write_text("""\
+[general]
+label_position = "right"
+label_format = "percentage"
+
+[[categories]]
+name = "test"
+color = "blue"
+""")
+    config = load_config(config_file)
+    assert config.label_position == "right"
+    assert config.label_format == "percentage"
+
+
+def test_load_config_label_defaults(tmp_path: Path) -> None:
+    """Defaults to left/ratio when label fields not specified."""
+    config_file = tmp_path / "config.toml"
+    config_file.write_text("""\
+[general]
+bar_width = 30
+
+[[categories]]
+name = "test"
+color = "blue"
+""")
+    config = load_config(config_file)
+    assert config.label_position == "left"
+    assert config.label_format == "ratio"

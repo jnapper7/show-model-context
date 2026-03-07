@@ -103,6 +103,8 @@ Optionally create `~/.config/claude-show-context/config.toml` (or pass `--config
 bar_width = 40        # number of characters in the bar
 empty_char = "░"      # character for unfilled portion
 filled_char = "█"     # character for filled portion
+label_position = "left"   # "left" or "right"
+label_format = "ratio"    # "ratio", "percentage", or "legend"
 
 [[categories]]
 name = "system"

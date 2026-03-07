@@ -97,6 +97,8 @@ def load_config(config_path: Path | None = None) -> AppConfig:
     bar_width = int(general.get("bar_width", 40))
     empty_char = str(general.get("empty_char", "░"))
     filled_char = str(general.get("filled_char", "█"))
+    label_position = str(general.get("label_position", "left"))
+    label_format = str(general.get("label_format", "ratio"))
 
     raw_categories_val: object = data.get("categories", [])
     raw_categories: list[object] = (
@@ -112,5 +114,7 @@ def load_config(config_path: Path | None = None) -> AppConfig:
         bar_width=bar_width,
         empty_char=empty_char,
         filled_char=filled_char,
+        label_position=label_position,
+        label_format=label_format,
         categories=categories,
     )

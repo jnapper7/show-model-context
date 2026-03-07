@@ -24,6 +24,8 @@ class AppConfig:
     bar_width: int = 40
     empty_char: str = "░"
     filled_char: str = "█"
+    label_position: str = "left"
+    label_format: str = "ratio"
     categories: list[CategoryConfig] = field(default_factory=lambda: list[CategoryConfig]())
 
 
