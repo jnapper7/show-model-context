@@ -39,14 +39,16 @@ def make_status_input(
     cache_read: int = 2000,
 ) -> str:
     """Create a JSON string mimicking Claude Code statusLine input."""
-    return json.dumps({
-        "transcript_path": transcript_path,
-        "context_window": {
-            "context_window_size": context_window_size,
-            "current_usage": {
-                "input_tokens": input_tokens,
-                "cache_creation_input_tokens": cache_creation,
-                "cache_read_input_tokens": cache_read,
+    return json.dumps(
+        {
+            "transcript_path": transcript_path,
+            "context_window": {
+                "context_window_size": context_window_size,
+                "current_usage": {
+                    "input_tokens": input_tokens,
+                    "cache_creation_input_tokens": cache_creation,
+                    "cache_read_input_tokens": cache_read,
+                },
             },
-        },
-    })
+        }
+    )

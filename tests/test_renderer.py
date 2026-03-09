@@ -153,9 +153,7 @@ def test_render_bar_label_legend_right() -> None:
         CategoryTokens(name="system", color="bright_black", tokens=100),
         CategoryTokens(name="claude", color="green", tokens=400),
     ]
-    result = render_bar(
-        categories, 500, 200000, _config(label_position="right", label_format="legend"), "total"
-    )
+    result = render_bar(categories, 500, 200000, _config(label_position="right", label_format="legend"), "total")
     assert "S" in result
     assert "C" in result
     # Bar should start with ANSI escape (not with legend text)

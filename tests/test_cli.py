@@ -16,10 +16,16 @@ from tests.conftest import make_status_input, write_transcript
 def test_cli_total_mode_with_transcript(tmp_path: Path) -> None:
     """E2E: total mode with a real transcript file."""
     transcript = tmp_path / "t.jsonl"
-    write_transcript(transcript, [
-        {"type": "assistant", "message": {"content": [{"type": "text", "text": "Hello " * 100}]}},
-        {"type": "user", "message": {"content": [{"type": "text", "text": "<system-reminder>test</system-reminder>"}]}},
-    ])
+    write_transcript(
+        transcript,
+        [
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "Hello " * 100}]}},
+            {
+                "type": "user",
+                "message": {"content": [{"type": "text", "text": "<system-reminder>test</system-reminder>"}]},
+            },
+        ],
+    )
     stdin = make_status_input(str(transcript))
     runner = CliRunner()
     result = runner.invoke(main, ["--mode", "total"], input=stdin)
@@ -30,9 +36,12 @@ def test_cli_total_mode_with_transcript(tmp_path: Path) -> None:
 def test_cli_current_mode(tmp_path: Path) -> None:
     """E2E: current mode."""
     transcript = tmp_path / "t.jsonl"
-    write_transcript(transcript, [
-        {"type": "assistant", "message": {"content": [{"type": "text", "text": "Some text here."}]}},
-    ])
+    write_transcript(
+        transcript,
+        [
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "Some text here."}]}},
+        ],
+    )
     stdin = make_status_input(str(transcript))
     runner = CliRunner()
     result = runner.invoke(main, ["--mode", "current"], input=stdin)
@@ -70,9 +79,12 @@ match_type = "assistant"
 match_content_types = ["text"]
 """)
     transcript = tmp_path / "t.jsonl"
-    write_transcript(transcript, [
-        {"type": "assistant", "message": {"content": [{"type": "text", "text": "Test response"}]}},
-    ])
+    write_transcript(
+        transcript,
+        [
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "Test response"}]}},
+        ],
+    )
     stdin = make_status_input(str(transcript))
     runner = CliRunner()
     result = runner.invoke(main, ["--config", str(config_file), "--mode", "total"], input=stdin)
@@ -92,9 +104,12 @@ def test_cli_nonexistent_transcript() -> None:
 def test_cli_subprocess(tmp_path: Path) -> None:
     """E2E: run as subprocess to test the actual entry point."""
     transcript = tmp_path / "t.jsonl"
-    write_transcript(transcript, [
-        {"type": "assistant", "message": {"content": [{"type": "text", "text": "Hello world test!"}]}},
-    ])
+    write_transcript(
+        transcript,
+        [
+            {"type": "assistant", "message": {"content": [{"type": "text", "text": "Hello world test!"}]}},
+        ],
+    )
     stdin = make_status_input(str(transcript))
     result = subprocess.run(
         [sys.executable, "-m", "show_model_context", "--mode", "total"],
@@ -116,10 +131,12 @@ def test_cli_missing_context_window_fields() -> None:
 
 def test_cli_missing_usage_fields() -> None:
     """E2E: missing fields in current_usage use defaults."""
-    stdin = json.dumps({
-        "transcript_path": "",
-        "context_window": {"context_window_size": 100000, "current_usage": {}},
-    })
+    stdin = json.dumps(
+        {
+            "transcript_path": "",
+            "context_window": {"context_window_size": 100000, "current_usage": {}},
+        }
+    )
     runner = CliRunner()
     result = runner.invoke(main, ["--mode", "total"], input=stdin)
     assert result.exit_code == 0
@@ -135,10 +152,12 @@ def test_cli_non_dict_context_window() -> None:
 
 def test_cli_non_dict_usage() -> None:
     """E2E: non-dict current_usage handled."""
-    stdin = json.dumps({
-        "transcript_path": "",
-        "context_window": {"context_window_size": 200000, "current_usage": "invalid"},
-    })
+    stdin = json.dumps(
+        {
+            "transcript_path": "",
+            "context_window": {"context_window_size": 200000, "current_usage": "invalid"},
+        }
+    )
     runner = CliRunner()
     result = runner.invoke(main, ["--mode", "total"], input=stdin)
     assert result.exit_code == 0

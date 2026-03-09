@@ -54,9 +54,7 @@ def _parse_input(raw: str) -> StatusInput:
 
 
 @click.command()
-@click.option(
-    "--config", "config_path", type=click.Path(exists=False), default=None, help="Path to TOML config file."
-)
+@click.option("--config", "config_path", type=click.Path(exists=False), default=None, help="Path to TOML config file.")
 @click.option("--mode", type=click.Choice(["total", "current"]), default="total", help="Bar display mode.")
 def main(config_path: str | None, mode: str) -> None:
     """Display Claude Code context window usage as a colored bar."""

@@ -65,9 +65,7 @@ def _parse_category(raw: JsonDict) -> CategoryConfig:
 
     content_contains_raw: object = raw.get("content_contains", [])
     content_contains: list[str] = (
-        [str(s) for s in cast(list[object], content_contains_raw)]
-        if isinstance(content_contains_raw, list)
-        else []
+        [str(s) for s in cast(list[object], content_contains_raw)] if isinstance(content_contains_raw, list) else []
     )
 
     return CategoryConfig(
