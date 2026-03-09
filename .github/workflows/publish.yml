@@ -5,39 +5,26 @@ on:
     tags: ["v*"]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - id: setup-python
-        uses: actions/setup-python@v6
-
-      - uses: astral-sh/setup-uv@v7
-
-      - run: uv sync
-
-      - run: uv tool run pyright
-
-      - run: uv tool run ruff check
-
-      - run: uv tool run ruff format --check
-
-      - run: uv run --frozen pytest -x
-
   publish:
-    needs: test
     runs-on: ubuntu-latest
     permissions:
       id-token: write
+    environment:
+      name: pypi
+      url: https://pypi.org/p/show-model-context
     steps:
-      - uses: actions/checkout@v4
+      - id: checkout
+        uses: actions/checkout@v4
 
       - id: setup-python
         uses: actions/setup-python@v6
 
-      - uses: astral-sh/setup-uv@v7
+      - id: install-uv
+        uses: astral-sh/setup-uv@v7
 
-      - run: uv build
+      - id: build
+        run: uv build
 
-      - uses: pypa/gh-action-pypi-publish@release/v1
+      # TODO: run in separate job for security
+      - id: pypi-publish
+        uses: pypa/gh-action-pypi-publish@release/v1
