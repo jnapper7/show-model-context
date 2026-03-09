@@ -1,0 +1,46 @@
+{
+  "alwaysThinkingEnabled": true,
+  "env": {
+    "CLAUDE_CODE_SHELL": "/bin/bash",
+    "ANTHROPIC_BASE_URL": "https://litellm.prod.outshift.ai",
+    "ANTHROPIC_MODEL": "bedrock/global.anthropic.claude-opus-4-6-v1",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "bedrock/global.anthropic.claude-opus-4-6-v1",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "bedrock/global.anthropic.claude-sonnet-4-6",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "bedrock/global.anthropic.claude-sonnet-4-6",
+    "CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS": "1"
+  },
+  "hooks": {
+    "PermissionRequest": [
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.plan // empty' > \"$CLAUDE_PROJECT_DIR\"/.plans/plan_$(date +%Y%m%d_%H%M%S).md",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  },
+  "marketplaces": [{"source": "project-codeguard/rules"}],
+  "permissions": {
+    "deny": [
+        "Read(.env)"
+    ]
+  },
+  "plugins": [
+    {
+      "name": "codeguard-security",
+      "marketplace": "project-codeguard",
+      "enabled": true
+    }
+  ],
+  "sandbox": {
+    "enabled": false
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "uv tool run show-model-context --mode total --config .claude/show-context-config.toml"
+  }
+}

@@ -1,0 +1,41 @@
+# show-model-context configuration
+# Copy to ~/.config/show-model-context/config.toml
+
+[general]
+bar_width = 0             # 0 = auto-detect from terminal width
+empty_char = "░"
+filled_char = "█"
+label_position = "left"   # "left" or "right"
+label_format = "ratio"    # "ratio", "percentage", or "legend"
+
+# Categories are checked in order; first match wins.
+# Unmatched entries go to "other" (dim color).
+
+[[categories]]
+name = "system"
+color = "bright_black"
+label = "Sy"                # custom legend label (default: first char of name)
+match_type = "user"
+content_contains = ["<system-reminder>", "CLAUDE.md", "<local-command-"]
+
+[[categories]]
+name = "files"
+color = "blue"
+match_tools = ["Read", "Write", "Edit"]
+
+[[categories]]
+name = "tools"
+color = "yellow"
+match_tools = ["Bash", "Glob", "Grep", "WebFetch", "WebSearch"]
+
+[[categories]]
+name = "skills"
+color = "magenta"
+label = "Sk"                # distinguishes from "system" in legend mode
+match_tools = ["Task", "Skill"]
+
+[[categories]]
+name = "claude"
+color = "green"
+match_type = "assistant"
+match_content_types = ["text", "thinking"]

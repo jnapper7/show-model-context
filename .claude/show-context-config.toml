@@ -1,0 +1,44 @@
+# show-model-context configuration
+# Copy to ~/.config/show-model-context/config.toml
+
+[general]
+bar_width = 0
+empty_char = "░"
+filled_char = "█"
+label_position = "right"   # "left" or "right"
+label_format = "legend"    # "ratio", "percentage", or "legend"
+
+# Categories are checked in order; first match wins.
+# Unmatched entries go to "other" (dim color).
+
+[[categories]]
+name = "files"
+color = "blue"
+match_tools = ["Read", "Write", "Edit"]
+label = "Fil"
+
+[[categories]]
+name = "skills"
+color = "magenta"
+match_tools = ["Task", "TaskCreate", "TaskUpdate", "TaskGet", "TaskList", "TaskStop", "TaskOutput", "Skill"]
+label = "Skl"
+
+[[categories]]
+name = "tools"
+color = "yellow"
+match_tools = ["*"]
+label = "Tol"
+
+[[categories]]
+name = "claude"
+color = "green"
+match_type = "assistant"
+match_content_types = ["*"]
+label = "Cld"
+
+[[categories]]
+name = "system"
+color = "bright_black"
+match_type = "user"
+content_contains = ["*"]
+label = "Sys"

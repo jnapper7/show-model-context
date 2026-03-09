@@ -1,0 +1,30 @@
+name: Test & Publish
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    environment:
+      name: pypi
+      url: https://pypi.org/p/show-model-context
+    steps:
+      - id: checkout
+        uses: actions/checkout@v4
+
+      - id: setup-python
+        uses: actions/setup-python@v6
+
+      - id: install-uv
+        uses: astral-sh/setup-uv@v7
+
+      - id: build
+        run: uv build
+
+      # TODO: run in separate job for security
+      - id: pypi-publish
+        uses: pypa/gh-action-pypi-publish@release/v1

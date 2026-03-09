@@ -1,0 +1,75 @@
+[project]
+name = "show-model-context"
+version = "0.1.0"
+description = "A CLI tool that displays a colored terminal bar showing model context window usage."
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+authors = [
+    {name="Jeff Napper", email="jenapper@cisco.com"},
+]
+dependencies = ["click>=8.1"]
+readme = "README.md"
+classifiers = [
+  #   4 - Beta
+  #   5 - Production/Stable
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+# Homepage = "https://example.com"
+# Documentation = "https://readthedocs.org"
+Repository = "https://github.com/jnapper7/show-model-context.git"
+Issues = "https://github.com/jnapper7/show-model-context/issues"
+Changelog = "https://github.com/jnapper7/show-model-context/blob/main/CHANGELOG.md"
+
+[project.scripts]
+show-model-context = "show_model_context.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/show_model_context"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=show_model_context --cov-branch --cov-report=term-missing --cov-fail-under=100"
+
+[tool.coverage.run]
+source = ["show_model_context"]
+omit = ["src/show_model_context/__main__.py"]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.",
+    "if TYPE_CHECKING:",
+]
+
+[tool.pyright]
+pythonVersion = "3.11"
+typeCheckingMode = "strict"
+include = ["src"]
+venvPath = "."
+venv = ".venv"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.uv]
+required-version = ">=0.9.26"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+]
