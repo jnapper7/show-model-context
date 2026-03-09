@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from claude_show_context.tokens import estimate_tokens, format_tokens
+from show_model_context.tokens import estimate_tokens, format_tokens
 
 
 def test_estimate_tokens_empty() -> None:

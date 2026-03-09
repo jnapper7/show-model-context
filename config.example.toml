@@ -1,5 +1,5 @@
-# claude-show-context configuration
-# Copy to ~/.config/claude-show-context/config.toml
+# show-model-context configuration
+# Copy to ~/.config/show-model-context/config.toml
 
 [general]
 bar_width = 0             # 0 = auto-detect from terminal width
@@ -14,6 +14,7 @@ label_format = "ratio"    # "ratio", "percentage", or "legend"
 [[categories]]
 name = "system"
 color = "bright_black"
+label = "Sy"                # custom legend label (default: first char of name)
 match_type = "user"
 content_contains = ["<system-reminder>", "CLAUDE.md", "<local-command-"]
 
@@ -30,6 +31,7 @@ match_tools = ["Bash", "Glob", "Grep", "WebFetch", "WebSearch"]
 [[categories]]
 name = "skills"
 color = "magenta"
+label = "Sk"                # distinguishes from "system" in legend mode
 match_tools = ["Task", "Skill"]
 
 [[categories]]

@@ -9,7 +9,7 @@ from pathlib import Path
 
 from click.testing import CliRunner
 
-from claude_show_context.cli import main
+from show_model_context.cli import main
 from tests.conftest import make_status_input, write_transcript
 
 
@@ -97,7 +97,7 @@ def test_cli_subprocess(tmp_path: Path) -> None:
     ])
     stdin = make_status_input(str(transcript))
     result = subprocess.run(
-        [sys.executable, "-m", "claude_show_context", "--mode", "total"],
+        [sys.executable, "-m", "show_model_context", "--mode", "total"],
         input=stdin,
         capture_output=True,
         text=True,

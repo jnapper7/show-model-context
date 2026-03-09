@@ -8,8 +8,8 @@ from typing import Any
 
 import pytest
 
-from claude_show_context.config import DEFAULT_CATEGORIES
-from claude_show_context.models import AppConfig
+from show_model_context.config import DEFAULT_CATEGORIES
+from show_model_context.models import AppConfig
 
 
 @pytest.fixture

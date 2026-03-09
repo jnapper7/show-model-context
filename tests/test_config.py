@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from claude_show_context.config import DEFAULT_CATEGORIES, load_config
+from show_model_context.config import DEFAULT_CATEGORIES, load_config
 
 
 def test_load_config_no_file() -> None:
@@ -181,6 +181,33 @@ color = "blue"
     config = load_config(config_file)
     assert config.label_position == "right"
     assert config.label_format == "percentage"
+
+
+def test_load_config_category_label(tmp_path: Path) -> None:
+    """Parses label field from TOML category."""
+    config_file = tmp_path / "config.toml"
+    config_file.write_text("""\
+[[categories]]
+name = "skills"
+color = "magenta"
+label = "Sk"
+match_tools = ["Task", "Skill"]
+""")
+    config = load_config(config_file)
+    assert len(config.categories) == 1
+    assert config.categories[0].label == "Sk"
+
+
+def test_load_config_category_label_default(tmp_path: Path) -> None:
+    """Label defaults to empty string when not specified."""
+    config_file = tmp_path / "config.toml"
+    config_file.write_text("""\
+[[categories]]
+name = "files"
+color = "blue"
+""")
+    config = load_config(config_file)
+    assert config.categories[0].label == ""
 
 
 def test_load_config_label_defaults(tmp_path: Path) -> None:

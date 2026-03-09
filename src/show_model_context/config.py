@@ -6,9 +6,9 @@ import tomllib
 from pathlib import Path
 from typing import Any, cast
 
-from claude_show_context.models import AppConfig, CategoryConfig
+from show_model_context.models import AppConfig, CategoryConfig
 
-DEFAULT_CONFIG_PATH = Path.home() / ".config" / "claude-show-context" / "config.toml"
+DEFAULT_CONFIG_PATH = Path.home() / ".config" / "show-model-context" / "config.toml"
 
 JsonDict = dict[str, Any]
 
@@ -47,6 +47,7 @@ def _parse_category(raw: JsonDict) -> CategoryConfig:
     """Parse a single category from TOML dict."""
     name = str(raw.get("name", "unknown"))
     color = str(raw.get("color", "white"))
+    label = str(raw.get("label", ""))
     match_type_val: object = raw.get("match_type")
     match_type = str(match_type_val) if match_type_val is not None else None
 
@@ -72,6 +73,7 @@ def _parse_category(raw: JsonDict) -> CategoryConfig:
     return CategoryConfig(
         name=name,
         color=color,
+        label=label,
         match_type=match_type,
         match_tools=match_tools,
         match_content_types=match_content_types,

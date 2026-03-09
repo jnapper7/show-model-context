@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
-from claude_show_context.models import AppConfig, CategoryTokens
-from claude_show_context.renderer import RESET, _visible_len, render_bar
+from show_model_context.models import AppConfig, CategoryTokens
+from show_model_context.renderer import RESET, _visible_len, render_bar
 
 
 def _config(
@@ -165,7 +165,7 @@ def test_render_bar_label_legend_right() -> None:
 def test_render_bar_auto_width() -> None:
     """bar_width=0 auto-detects from terminal width."""
     categories = [CategoryTokens(name="claude", color="green", tokens=500)]
-    with patch("claude_show_context.renderer.shutil.get_terminal_size") as mock_size:
+    with patch("show_model_context.renderer.shutil.get_terminal_size") as mock_size:
         mock_size.return_value = type("TermSize", (), {"columns": 80})()
         result = render_bar(categories, 10000, 200000, _config(bar_width=0), "total")
     # Label "10K / 200K" is 11 chars, so bar should be 80 - 11 - 1 = 68 chars wide
@@ -177,10 +177,24 @@ def test_render_bar_auto_width() -> None:
 def test_render_bar_auto_width_narrow_terminal() -> None:
     """Auto-width has a minimum of 10 characters for the bar."""
     categories = [CategoryTokens(name="claude", color="green", tokens=500)]
-    with patch("claude_show_context.renderer.shutil.get_terminal_size") as mock_size:
+    with patch("show_model_context.renderer.shutil.get_terminal_size") as mock_size:
         mock_size.return_value = type("TermSize", (), {"columns": 15})()
         result = render_bar(categories, 10000, 200000, _config(bar_width=0), "total")
     assert "10K / 200K" in result
+
+
+def test_render_bar_label_legend_custom_label() -> None:
+    """Legend format uses custom label when set on CategoryTokens."""
+    categories = [
+        CategoryTokens(name="system", color="bright_black", label="Sy", tokens=300),
+        CategoryTokens(name="skills", color="magenta", label="Sk", tokens=200),
+        CategoryTokens(name="claude", color="green", tokens=100),
+    ]
+    result = render_bar(categories, 600, 200000, _config(label_format="legend"), "total")
+    assert "Sy" in result
+    assert "Sk" in result
+    # claude has no custom label, should use first char
+    assert "C" in result
 
 
 def test_visible_len_strips_ansi() -> None:

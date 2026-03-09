@@ -1,4 +1,4 @@
-"""Data models for claude-show-context."""
+"""Data models for show-model-context."""
 
 from __future__ import annotations
 
@@ -11,6 +11,7 @@ class CategoryConfig:
 
     name: str
     color: str = "white"
+    label: str = ""
     match_type: str | None = None
     match_tools: list[str] = field(default_factory=lambda: list[str]())
     match_content_types: list[str] = field(default_factory=lambda: list[str]())
@@ -60,4 +61,5 @@ class CategoryTokens:
 
     name: str
     color: str
+    label: str = ""
     tokens: int = 0

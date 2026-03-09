@@ -5,8 +5,8 @@ from __future__ import annotations
 import re
 import shutil
 
-from claude_show_context.models import AppConfig, CategoryTokens
-from claude_show_context.tokens import format_tokens
+from show_model_context.models import AppConfig, CategoryTokens
+from show_model_context.tokens import format_tokens
 
 _ANSI_RE = re.compile(r"\033\[[0-9;]*m")
 
@@ -160,7 +160,8 @@ def _build_label(
         parts: list[str] = []
         for cat in categories:
             if cat.tokens > 0:
-                parts.append(f"{_color(config.filled_char, cat.color)}{cat.name[0].upper()}")
+                legend_label = cat.label if cat.label else cat.name[0].upper()
+                parts.append(f"{_color(config.filled_char, cat.color)}{legend_label}")
         return " ".join(parts)
 
     return f"{format_tokens(display_total)} / {format_tokens(display_max)}"

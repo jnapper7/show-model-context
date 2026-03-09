@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 from typing import Any, cast
 
-from claude_show_context.models import AppConfig, CategoryTokens
-from claude_show_context.tokens import estimate_tokens
+from show_model_context.models import AppConfig, CategoryTokens
+from show_model_context.tokens import estimate_tokens
 
 SKIP_TYPES = {"progress", "file-history-snapshot"}
 
@@ -85,8 +85,8 @@ def _match_category(
     config: AppConfig,
     tool_name_context: str | None,
     tool_id_map: dict[str, str] | None = None,
-) -> tuple[str, str]:
-    """Match a content block to a category. Returns (name, color)."""
+) -> tuple[str, str, str]:
+    """Match a content block to a category. Returns (name, color, label)."""
     block_content_type = _get_block_content_type(block)
     block_tool_name = _get_tool_name_from_block(block, tool_id_map)
 
@@ -107,9 +107,9 @@ def _match_category(
             if "*" not in cat.content_contains and not any(s in serialized for s in cat.content_contains):
                 continue
 
-        return cat.name, cat.color
+        return cat.name, cat.color, cat.label
 
-    return "other", "dim"
+    return "other", "dim", ""
 
 
 def parse_transcript(transcript_path: str, config: AppConfig) -> list[CategoryTokens]:
@@ -178,12 +178,12 @@ def parse_transcript(transcript_path: str, config: AppConfig) -> list[CategoryTo
                 serialized = _serialize_block(cast(object, block))
                 tokens = estimate_tokens(serialized)
 
-                cat_name, cat_color = _match_category(
+                cat_name, cat_color, cat_label = _match_category(
                     cast(object, block), entry_type, serialized, config, tool_context, tool_id_map
                 )
 
                 if cat_name not in category_map:
-                    category_map[cat_name] = CategoryTokens(name=cat_name, color=cat_color)
+                    category_map[cat_name] = CategoryTokens(name=cat_name, color=cat_color, label=cat_label)
                 category_map[cat_name].tokens += tokens
 
     return _finalize(category_map, config)

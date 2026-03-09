@@ -1,4 +1,4 @@
-# claude-show-context
+# show-model-context
 
 A CLI tool that displays a colored terminal bar showing Claude Code context window usage, broken down by configurable categories.
 
@@ -10,7 +10,7 @@ The filled portion is multi-colored, with each color representing a category of 
 
 ## How It Works
 
-`claude-show-context` integrates with Claude Code's [statusLine](https://docs.anthropic.com/en/docs/claude-code) setting. After each assistant message, Claude Code sends a JSON payload on stdin containing the transcript path and token usage. This tool:
+`show-model-context` integrates with Claude Code's [statusLine](https://docs.anthropic.com/en/docs/claude-code) setting. After each assistant message, Claude Code sends a JSON payload on stdin containing the transcript path and token usage. This tool:
 
 1. Reads the session transcript (JSONL) and categorizes each content block
 2. Estimates token usage per category (chars / 4)
@@ -23,8 +23,8 @@ Requires Python 3.11+.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/claude-show-context.git
-cd claude-show-context
+git clone https://github.com/your-org/show-model-context.git
+cd show-model-context
 
 # Install with uv
 uv sync
@@ -33,7 +33,7 @@ uv sync
 Or install directly:
 
 ```bash
-uv tool install git+https://github.com/your-org/claude-show-context.git
+uv tool install git+https://github.com/your-org/show-model-context.git
 ```
 
 ## Claude Code Setup
@@ -44,7 +44,7 @@ Add the following to your Claude Code settings (`.claude/settings.json` or `~/.c
 {
   "statusLine": {
     "type": "command",
-    "command": "uv tool run claude-show-context --mode total"
+    "command": "uv tool run show-model-context --mode total"
   }
 }
 ```
@@ -52,12 +52,12 @@ Add the following to your Claude Code settings (`.claude/settings.json` or `~/.c
 ## Usage
 
 ```
-claude-show-context [--config PATH] [--mode total|current]
+show-model-context [--config PATH] [--mode total|current]
 ```
 
 | Flag | Description |
 |---|---|
-| `--config PATH` | Path to a TOML config file (default: `~/.config/claude-show-context/config.toml`) |
+| `--config PATH` | Path to a TOML config file (default: `~/.config/show-model-context/config.toml`) |
 | `--mode total` | 100% = model's max context window (e.g. 200K). Shows how full the window is. |
 | `--mode current` | 100% = current tokens used. Shows category proportions only. |
 
@@ -96,7 +96,7 @@ Categories are checked in order; first match wins.
 
 ## Configuration
 
-Optionally create `~/.config/claude-show-context/config.toml` (or pass `--config`). See [`config.example.toml`](config.example.toml) for all options.
+Optionally create `~/.config/show-model-context/config.toml` (or pass `--config`). See [`config.example.toml`](config.example.toml) for all options.
 
 ```toml
 [general]
@@ -109,19 +109,20 @@ label_format = "ratio"    # "ratio", "percentage", or "legend"
 [[categories]]
 name = "system"
 color = "bright_black"
-match_type = "user"                    # match transcript entry type
+label = "Sy"                               # custom legend label (default: first char of name)
+match_type = "user"                        # match transcript entry type
 content_contains = ["<system-reminder>", "CLAUDE.md"]  # substring match
 
 [[categories]]
 name = "files"
 color = "blue"
-match_tools = ["Read", "Write", "Edit"]  # match tool_use/tool_result by name
+match_tools = ["Read", "Write", "Edit"]    # match tool_use/tool_result by name
 
 [[categories]]
 name = "claude"
 color = "green"
 match_type = "assistant"
-match_content_types = ["text", "thinking"]  # match content block type
+match_content_types = ["text", "thinking"] # match content block type
 ```
 
 ### Category Matching Rules
@@ -134,6 +135,7 @@ Each category can use one or more of these matchers (all specified matchers must
 | `match_tools` | Match `tool_use` blocks by tool name, or `tool_result` blocks paired with a preceding `tool_use` |
 | `match_content_types` | Match content block `type` (`text`, `thinking`, `tool_use`, etc.) |
 | `content_contains` | Match if serialized content contains any of the listed substrings |
+| `label` | Custom legend label (used in `legend` label_format). Defaults to the first character of `name`. Useful when multiple categories share the same initial (e.g. "system" and "skills"). |
 
 ### Wildcards
 

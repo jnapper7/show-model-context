@@ -1,4 +1,4 @@
-"""CLI entry point for claude-show-context."""
+"""CLI entry point for show-model-context."""
 
 from __future__ import annotations
 
@@ -9,10 +9,10 @@ from typing import Any, cast
 
 import click
 
-from claude_show_context.config import load_config
-from claude_show_context.models import ContextWindow, CurrentUsage, StatusInput
-from claude_show_context.renderer import render_bar
-from claude_show_context.transcript import parse_transcript
+from show_model_context.config import load_config
+from show_model_context.models import ContextWindow, CurrentUsage, StatusInput
+from show_model_context.renderer import render_bar
+from show_model_context.transcript import parse_transcript
 
 JsonDict = dict[str, Any]
 

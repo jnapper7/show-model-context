@@ -5,8 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from claude_show_context.models import AppConfig, CategoryConfig
-from claude_show_context.transcript import _get_tool_name_from_block, _get_tool_use_id, parse_transcript
+from show_model_context.models import AppConfig, CategoryConfig
+from show_model_context.transcript import _get_tool_name_from_block, _get_tool_use_id, parse_transcript
 from tests.conftest import write_transcript
 
 
@@ -553,6 +553,46 @@ def test_wildcard_content_contains(tmp_path: Path) -> None:
     matched = [c for c in result if c.name == "catch_all"]
     assert len(matched) == 1
     assert matched[0].tokens > 0
+
+
+def test_label_propagates_from_config_to_category_tokens(tmp_path: Path) -> None:
+    """label field on CategoryConfig propagates through _match_category into CategoryTokens."""
+    path = tmp_path / "t.jsonl"
+    write_transcript(path, [
+        {
+            "type": "assistant",
+            "message": {
+                "content": [{"type": "text", "text": "Hello world! This is a test."}],
+            },
+        },
+    ])
+    config = AppConfig(categories=[
+        CategoryConfig(name="claude", color="green", label="Cl", match_type="assistant", match_content_types=["text"]),
+    ])
+    result = parse_transcript(str(path), config)
+    claude_cats = [c for c in result if c.name == "claude"]
+    assert len(claude_cats) == 1
+    assert claude_cats[0].label == "Cl"
+
+
+def test_label_empty_when_not_configured(tmp_path: Path) -> None:
+    """CategoryTokens.label defaults to empty string when not set in config."""
+    path = tmp_path / "t.jsonl"
+    write_transcript(path, [
+        {
+            "type": "assistant",
+            "message": {
+                "content": [{"type": "text", "text": "Hello world! This is a test."}],
+            },
+        },
+    ])
+    config = AppConfig(categories=[
+        CategoryConfig(name="claude", color="green", match_type="assistant", match_content_types=["text"]),
+    ])
+    result = parse_transcript(str(path), config)
+    claude_cats = [c for c in result if c.name == "claude"]
+    assert len(claude_cats) == 1
+    assert claude_cats[0].label == ""
 
 
 def test_wildcard_does_not_bypass_other_matchers(tmp_path: Path) -> None:
